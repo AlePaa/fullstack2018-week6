@@ -10,6 +10,23 @@ const actionFor = {
       type: 'ADD',
       anecdote: data
     }
+  },
+  notificating(notification) {
+    return {
+      type: 'NOTIFY',
+      notification
+    }
+  },
+  notificationHiding() {
+    return {
+      type: 'HIDE_NOTIFICATION'
+    }
+  },
+  filtering(filter) {
+    return {
+      type: 'SET_FILTER',
+      filter
+    }
   }
 }
 

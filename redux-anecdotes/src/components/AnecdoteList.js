@@ -1,28 +1,31 @@
 import React from 'react'
-import PropTypes from 'prop-types'
-import actionFor from '../actionCreators'
+import { connect } from 'react-redux'
+import { voteAdding } from './../reducers/anecdoteReducer'
+import { notificating, notificationHiding } from './../reducers/notificationReducer'
+
+import Filter from './Filter'
 
 class AnecdoteList extends React.Component {
 
-  addVote = (id) => () => {
-    this.context.store.dispatch(
-      actionFor.voteAdding(id)
-    )
+  addVote = (id, content) => () => {
+    this.props.voteAdding(id)
+    this.props.notificating("you voted '"+ content +"'")
+    setTimeout(() => this.props.notificationHiding(), 5000)
   }
 
   render() {
-    const anecdotes = this.context.store.getState().anecdotes.sort( (a,b) => a.votes < b.votes )
     return (
       <div>
         <h2>Anecdotes</h2>
-        {anecdotes.map(anecdote =>
+        <Filter />
+        {this.props.anecdotesToShow.map(anecdote =>
           <div key={anecdote.id}>
             <div>
               {anecdote.content}
             </div>
             <div>
               has {anecdote.votes}
-              <button onClick={this.addVote(anecdote.id)}>vote</button>
+              <button onClick={this.addVote(anecdote.id, anecdote.content)}>vote</button>
             </div>
           </div>
         )}
@@ -31,9 +34,26 @@ class AnecdoteList extends React.Component {
   }
 }
 
-AnecdoteList.contextTypes = {
-  store: PropTypes.object
+const filteredAnecdotes = (anecdotes, filter) => {
+  return anecdotes
+    .filter((anec) => anec.content.includes(filter))
+    .sort( (a,b) => a.votes < b.votes )
+}
+const mapStateToProps = (state) => {
+  return {
+    anecdotesToShow: filteredAnecdotes(state.anecdotes, state.filter)
+  }
 }
 
+const mapDispatchToProps = {
+  voteAdding,
+  notificating,
+  notificationHiding
+}
 
-export default AnecdoteList
+const ConnectedAnecdoteList = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(AnecdoteList)
+
+export default ConnectedAnecdoteList

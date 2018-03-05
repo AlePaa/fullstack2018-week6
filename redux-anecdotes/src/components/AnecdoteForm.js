@@ -1,6 +1,7 @@
 import React from 'react'
-import PropTypes from 'prop-types'
-import actionFor from '../actionCreators'
+import { connect } from 'react-redux'
+import { anecdoteCreating } from './../reducers/anecdoteReducer'
+import { notificating, notificationHiding } from './../reducers/notificationReducer'
 
 class AnecdoteForm extends React.Component {
 
@@ -8,9 +9,11 @@ class AnecdoteForm extends React.Component {
     e.preventDefault()
     const anec = e.target.anecdote.value
     if (anec !== '') {
-      this.context.store.dispatch(
-        actionFor.anecdoteCreating(anec)
-      )
+      this.props.anecdoteCreating(anec)
+      this.props.notificating("anecdote created: '"+anec+"'")
+      setTimeout(() =>  {
+        this.props.notificationHiding()
+      }, 5000)
       e.target.anecdote.value = ''
     }
   }
@@ -28,8 +31,15 @@ class AnecdoteForm extends React.Component {
   }
 }
 
-AnecdoteForm.contextTypes = {
-  store: PropTypes.object
+const mapDispatchToProps = {
+  anecdoteCreating,
+  notificating,
+  notificationHiding
 }
 
-export default AnecdoteForm
+const ConnectedAnecdoteForm = connect(
+  null,
+  mapDispatchToProps
+)(AnecdoteForm)
+
+export default ConnectedAnecdoteForm
