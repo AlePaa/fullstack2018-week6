@@ -1,21 +1,18 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { anecdoteCreating } from './../reducers/anecdoteReducer'
-import { notificating, notificationHiding } from './../reducers/notificationReducer'
+import { notify } from './../reducers/notificationReducer'
 import anecdoteService from '../services/anecdotes'
 
 class AnecdoteForm extends React.Component {
 
   createAnecdote = async (e) => {
     e.preventDefault()
-      const anec = e.target.anecdote.value
-      e.target.anecdote.value = ''
-      const newAnecdote = await anecdoteService.createNew(anec)
-      this.props.anecdoteCreating(newAnecdote)
-      this.props.notificating("anecdote created: '"+anec+"'")
-      setTimeout(() =>  {
-        this.props.notificationHiding()
-      }, 5000)
+    const anec = e.target.anecdote.value
+    e.target.anecdote.value = ''
+    this.props.anecdoteCreating(anec)
+    this.props.notify("anecdote created: '"+anec+"'", 5000)
+
   }
 
   render() {
@@ -33,8 +30,7 @@ class AnecdoteForm extends React.Component {
 
 const mapDispatchToProps = {
   anecdoteCreating,
-  notificating,
-  notificationHiding
+  notify
 }
 
 const ConnectedAnecdoteForm = connect(

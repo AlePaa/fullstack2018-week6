@@ -13,9 +13,9 @@ const createNew = async (content) => {
 }
 
 const addVote = async (id) => {
-  const anecs = await axios.get(url)
-  const newAnecs = {}
-  const response = await axios.put(url, newAnecs)
+  const res = await axios.get(url+'/'+id)
+  const anec = res.data
+  const response = await axios.put(url+'/'+id, {...anec, votes: anec.votes + 1})
   return response.data
 }
 
